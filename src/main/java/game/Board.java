@@ -6,21 +6,9 @@ public class Board {
     private byte[] board = new byte[90];
     private Map<String, PieceInfo> pieces = new HashMap<>();
     public boolean sideToMove = true;
-    private long zobristHash;
-    private static long[][] zobristTable = new long[90][256];
-
-    static {
-        Random rand = new Random(42);
-        for (int i = 0; i < 90; i++) {
-            for (int j = 0; j < 256; j++) {
-                zobristTable[i][j] = rand.nextLong();
-            }
-        }
-    }
 
     public Board() {
         setupInitialPosition();
-        initZobristHash();
     }
 
     private void setupInitialPosition() {
@@ -42,21 +30,10 @@ public class Board {
         board[y * 9 + x] = (byte) id.charAt(0);
     }
 
-    private void initZobristHash() {
-        zobristHash = 0;
-        for (Map.Entry<String, PieceInfo> e : pieces.entrySet()) {
-            PieceInfo p = e.getValue();
-            zobristHash ^= zobristTable[p.y * 9 + p.x][p.getPiece()];
-        }
-    }
-
     public void makeMove(Move move) {
         PieceInfo p = pieces.get(move.pieceId);
         if (p == null) return;
-        if (move.fromX == 0 && move.fromY == 0) { // 修复：设置 fromX, fromY
-            move.fromX = p.x;
-            move.fromY = p.y;
-        }
+
         int from = p.y * 9 + p.x;
         int to = move.y * 9 + move.x;
 
@@ -73,7 +50,6 @@ public class Board {
         board[to] = p.getPiece();
         p.x = move.x;
         p.y = move.y;
-        updateZobristHash(move);
         sideToMove = !sideToMove;
     }
 
@@ -88,20 +64,9 @@ public class Board {
         if (move.captured != null) {
             pieces.put(move.captured.id, move.captured);
         }
-        updateZobristHash(move);
         sideToMove = !sideToMove;
     }
 
-    private void updateZobristHash(Move move) {
-        PieceInfo p = pieces.get(move.pieceId);
-        int from = move.fromY * 9 + move.fromX;
-        int to = move.y * 9 + move.x;
-        zobristHash ^= zobristTable[from][p.getPiece()];
-        zobristHash ^= zobristTable[to][p.getPiece()];
-        if (move.captured != null) {
-            zobristHash ^= zobristTable[to][move.captured.getPiece()];
-        }
-    }
 
     public Move[] generateMoves(boolean capturesOnly) {
         List<Move> moves = new ArrayList<>();
@@ -117,6 +82,7 @@ public class Board {
         List<Move> moves = new ArrayList<>();
         int x = p.x, y = p.y;
         char type = p.getPieceType();
+
 
         switch (type) {
             case 'r':
@@ -294,14 +260,6 @@ public class Board {
         return legal;
     }
 
-    public long getZobristHash() {
-        return zobristHash;
-    }
-
-    public boolean getSideToMove() {
-        return sideToMove;
-    }
-
     public void print() {
         for (int y = 9; y >= 0; y--) {
             for (int x = 0; x < 9; x++) {
@@ -312,15 +270,4 @@ public class Board {
         }
     }
 
-    public Board clone() {
-        Board b = new Board();
-        System.arraycopy(this.board, 0, b.board, 0, 90);
-        b.pieces = new HashMap<>();
-        for (Map.Entry<String, PieceInfo> e : this.pieces.entrySet()) {
-            b.pieces.put(e.getKey(), new PieceInfo(e.getValue()));
-        }
-        b.zobristHash = this.zobristHash;
-        b.sideToMove = this.sideToMove;
-        return b;
-    }
 }
