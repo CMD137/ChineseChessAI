@@ -32,18 +32,24 @@ public class Main {
                 //temp
                 long start=System.currentTimeMillis();
 
-
                 //处理输入
                 if(line.isEmpty()) continue;
                 if(line.equals("START")){
                     board.sideToMove = true;
                 } else {
+                    //System.out.println("sideToMove: " + board.getSideToMove());
                     String[] sp = line.trim().split("\\s+");
                     String pid = sp[0];
                     int x = Integer.parseInt(sp[1]);
                     int y = Integer.parseInt(sp[2]);
                     Move move=new Move(pid, x, y);
                     board.makeMove(move);
+
+                    //temp
+                    //System.out.println("sideToMove: " + board.getSideToMove());
+                    board.print(); // 显示棋盘      
+                    long now=System.currentTimeMillis();
+                    System.out.println("计算沙子棋盘用时:"+(now-start)+"ms");
                 }
 
                 System.out.println("开始思考！");
@@ -59,7 +65,7 @@ public class Main {
                     System.out.flush(); //注意要写这个
                 } else {
                     //temp
-                    System.out.println("AI认输");
+                    System.out.println("bestMove空");
                     break;
                 }
 

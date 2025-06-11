@@ -12,20 +12,26 @@ public class AI {
     private HistoryTable historyTable = new HistoryTable();
 
     public Move iterativeDeepening(Board board, int maxDepth) {
-        if (maxDepth <= 0) return null; // 修复：处理 maxDepth <= 0
+        if (maxDepth <= 0) return null;
         Move bestMove = null;
         int bestValue = -Constants.INF;
+
 
         for (int depth = 1; depth <= maxDepth; depth++) {
             int[] result = alphaBeta(board, depth, -Constants.INF, Constants.INF, true);
             bestValue = result[0];
             bestMove = result[1] >= 0 ? board.generateMoves(false)[result[1]] : null;
-            if (bestValue > 9000) { // 假设9000表示必胜
+            System.out.println("Depth: " + depth + ", bestValue: " + bestValue + ", bestMoveIndex: " + result[1]); // 调试
+            if (bestMove != null) { // 修复：一旦找到有效移动，提前返回
+                break;
+            }
+            if (bestValue > 9000) {
                 break;
             }
         }
         return bestMove;
     }
+
 
     private int[] alphaBeta(Board board, int depth, int alpha, int beta, boolean maximizingPlayer) {
         long zobrist = board.getZobristHash();

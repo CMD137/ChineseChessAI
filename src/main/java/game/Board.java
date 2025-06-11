@@ -26,10 +26,15 @@ public class Board {
     private void setupInitialPosition() {
         pieces.clear();
         add("R2", 0, 9); add("N2", 1, 9); add("B2", 2, 9); add("A2", 3, 9); add("K", 4, 9);
-        add("A1", 5, 9); add("B1", 6, 9); add("N1", 7, 9); add("R1", 8, 9);
+        add("A1", 5, 9); add("B1", 6, 9); add("R1", 8, 9);
         add("C2", 1, 7); add("C1", 7, 7);
         add("P5", 0, 6); add("P4", 2, 6); add("P3", 4, 6); add("P2", 6, 6); add("P1", 8, 6);
+<<<<<<< Updated upstream
         add("r1", 0, 0); add("n1", 1, 0); add("b1", 2, 0); add("a1", 3, 0); add("k", 4, 0);
+=======
+        // 我方 (小写)
+        add("r1", 0, 0); add("b1", 2, 0); add("a1", 3, 0); add("k", 4, 0);
+>>>>>>> Stashed changes
         add("a2", 5, 0); add("b2", 6, 0); add("n2", 7, 0); add("r2", 8, 0);
         add("c1", 1, 2); add("c2", 7, 2);
         add("p1", 0, 3); add("p2", 2, 3); add("p3", 4, 3); add("p4", 6, 3); add("p5", 8, 3);
@@ -145,7 +150,28 @@ public class Board {
                         break;
                     }
                 }
+<<<<<<< Updated upstream
                 // 其他方向类似，省略
+=======
+                for (int i = x - 1; i >= 0; i--) {
+                    if (board[i + y * 9] != 0) {
+                        for (i--; i >= 0; i--) if (board[i + y * 9] != 0) { addMove(p, i, y, moves, true); break; }
+                        break;
+                    }
+                }
+                for (int i = y + 1; i < 10; i++) {
+                    if (board[x + i * 9] != 0) {
+                        for (i++; i < 10; i++) if (board[x + i * 9] != 0) { addMove(p, x, i, moves, true); break; }
+                        break;
+                    }
+                }
+                for (int i = y - 1; i >= 0; i--) {
+                    if (board[x + i * 9] != 0) {
+                        for (i--; i >= 0; i--) if (board[x + i * 9] != 0) { addMove(p, x, i, moves, true); break; }
+                        break;
+                    }
+                }
+>>>>>>> Stashed changes
                 break;
             case 'k':
                 int[][] kingMoves = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
@@ -181,6 +207,7 @@ public class Board {
         }
         return moves;
     }
+
 
     private void addMove(PieceInfo p, int x, int y, List<Move> moves, boolean capturesOnly) {
         if (!isValidPosition(x, y)) return;
