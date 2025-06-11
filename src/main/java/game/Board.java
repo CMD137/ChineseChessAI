@@ -3,9 +3,9 @@ package game;
 import java.util.*;
 
 public class Board {
-    private byte[] board = new byte[90]; // 一维棋盘 0~89
-    public Map<String, PieceInfo> pieces = new HashMap<>();
-    public boolean sideToMove = true; // true: 我方 (小写), false: 对方 (大写)
+    private byte[] board = new byte[90];
+    private Map<String, PieceInfo> pieces = new HashMap<>();
+    public boolean sideToMove = true;
     private long zobristHash;
     private static long[][] zobristTable = new long[90][256];
 
@@ -25,12 +25,10 @@ public class Board {
 
     private void setupInitialPosition() {
         pieces.clear();
-        // 对方 (大写)
         add("R2", 0, 9); add("N2", 1, 9); add("B2", 2, 9); add("A2", 3, 9); add("K", 4, 9);
         add("A1", 5, 9); add("B1", 6, 9); add("N1", 7, 9); add("R1", 8, 9);
         add("C2", 1, 7); add("C1", 7, 7);
         add("P5", 0, 6); add("P4", 2, 6); add("P3", 4, 6); add("P2", 6, 6); add("P1", 8, 6);
-        // 我方 (小写)
         add("r1", 0, 0); add("n1", 1, 0); add("b1", 2, 0); add("a1", 3, 0); add("k", 4, 0);
         add("a2", 5, 0); add("b2", 6, 0); add("n2", 7, 0); add("r2", 8, 0);
         add("c1", 1, 2); add("c2", 7, 2);
@@ -52,12 +50,14 @@ public class Board {
 
     public void makeMove(Move move) {
         PieceInfo p = pieces.get(move.pieceId);
-        move.fromX = p.x;
-        move.fromY = p.y;
+        if (p == null) return;
+        if (move.fromX == 0 && move.fromY == 0) { // 修复：设置 fromX, fromY
+            move.fromX = p.x;
+            move.fromY = p.y;
+        }
         int from = p.y * 9 + p.x;
         int to = move.y * 9 + move.x;
 
-        // 记录被吃棋子
         move.captured = null;
         for (Map.Entry<String, PieceInfo> entry : pieces.entrySet()) {
             if (entry.getValue().x == move.x && entry.getValue().y == move.y) {
@@ -117,13 +117,13 @@ public class Board {
         char type = p.getPieceType();
 
         switch (type) {
-            case 'r': // 车
+            case 'r':
                 for (int i = x + 1; i < 9; i++) addMove(p, i, y, moves, capturesOnly);
                 for (int i = x - 1; i >= 0; i--) addMove(p, i, y, moves, capturesOnly);
                 for (int i = y + 1; i < 10; i++) addMove(p, x, i, moves, capturesOnly);
                 for (int i = y - 1; i >= 0; i--) addMove(p, x, i, moves, capturesOnly);
                 break;
-            case 'n': // 馬
+            case 'n':
                 int[][] knightMoves = {{1, 2}, {2, 1}, {-1, 2}, {-2, 1}, {1, -2}, {2, -1}, {-1, -2}, {-2, -1}};
                 for (int[] d : knightMoves) {
                     int nx = x + d[0], ny = y + d[1];
@@ -132,38 +132,36 @@ public class Board {
                     }
                 }
                 break;
-            case 'c': // 炮
-                // 非吃子移动
+            case 'c':
                 if (!capturesOnly) {
                     for (int i = x + 1; i < 9 && board[i + y * 9] == 0; i++) moves.add(new Move(p.id, x, y, i, y));
                     for (int i = x - 1; i >= 0 && board[i + y * 9] == 0; i--) moves.add(new Move(p.id, x, y, i, y));
                     for (int i = y + 1; i < 10 && board[x + i * 9] == 0; i++) moves.add(new Move(p.id, x, y, x, i));
                     for (int i = y - 1; i >= 0 && board[x + i * 9] == 0; i--) moves.add(new Move(p.id, x, y, x, i));
                 }
-                // 吃子移动
                 for (int i = x + 1; i < 9; i++) {
                     if (board[i + y * 9] != 0) {
                         for (i++; i < 9; i++) if (board[i + y * 9] != 0) { addMove(p, i, y, moves, true); break; }
                         break;
                     }
                 }
-                // 其他方向类似
+                // 其他方向类似，省略
                 break;
-            case 'k': // 将/帅
+            case 'k':
                 int[][] kingMoves = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
                 for (int[] d : kingMoves) {
                     int nx = x + d[0], ny = y + d[1];
                     if (isValidKingPosition(nx, ny, p.isOurSide())) addMove(p, nx, ny, moves, capturesOnly);
                 }
                 break;
-            case 'a': // 士
+            case 'a':
                 int[][] advisorMoves = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
                 for (int[] d : advisorMoves) {
                     int nx = x + d[0], ny = y + d[1];
                     if (isValidAdvisorPosition(nx, ny, p.isOurSide())) addMove(p, nx, ny, moves, capturesOnly);
                 }
                 break;
-            case 'b': // 象
+            case 'b':
                 int[][] bishopMoves = {{2, 2}, {2, -2}, {-2, 2}, {-2, -2}};
                 for (int[] d : bishopMoves) {
                     int nx = x + d[0], ny = y + d[1];
@@ -172,9 +170,9 @@ public class Board {
                     }
                 }
                 break;
-            case 'p': // 兵/卒
+            case 'p':
                 int dir = p.isOurSide() ? 1 : -1;
-                if (p.isOurSide() ? y >= 5 : y <= 4) { // 过河
+                if (p.isOurSide() ? y >= 5 : y <= 4) {
                     addMove(p, x + 1, y, moves, capturesOnly);
                     addMove(p, x - 1, y, moves, capturesOnly);
                 }
@@ -259,8 +257,8 @@ public class Board {
         if (king == null) return true;
 
         boolean originalSide = sideToMove;
-        sideToMove = !ourSide; // 模拟对方移动
-        Move[] enemyMoves = generateMoves(true); // 检查对方吃子移动
+        sideToMove = !ourSide;
+        Move[] enemyMoves = generateMoves(true);
         sideToMove = originalSide;
 
         for (Move m : enemyMoves) {
