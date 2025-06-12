@@ -19,7 +19,7 @@ public class AITest {
         int round=0;
         board.print(); // 显示棋盘
 
-        int times=20;
+        int times=50;
         while (times!=0){
             // 测试随机移动是否不为空
             Move bestMove = ai.getRandomMove(board);
@@ -41,6 +41,7 @@ public class AITest {
             round++;
             System.out.println("--------------------------第"+round+"回合:--------------------------");
             board.print(); // 显示棋盘
+            System.out.println("size:"+board.pieces.size());
             times--;
         }
 

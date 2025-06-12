@@ -90,18 +90,22 @@ public class Board {
                 for (int i = x + 1; i < 9; i++) {
                     if(countPiecesBetween(x, y, i, y)==0)
                         addMove(p, i, y, moves, capturesOnly);
+                    if (board[y * 9 + i] != 0) break; // 遇到任何棋子剪枝
                 }
                 for (int i = x - 1; i >= 0; i--) {
                     if(countPiecesBetween(x, y, i, y)==0)
                         addMove(p, i, y, moves, capturesOnly);
+                    if (board[y * 9 + i] != 0) break; // 遇到任何棋子剪枝
                 }
                 for (int i = y + 1; i < 10; i++) {
                     if(countPiecesBetween(x, y, x, i)==0)
                         addMove(p, x, i, moves, capturesOnly);
+                    if (board[y * 9 + i] != 0) break; // 遇到任何棋子剪枝
                 }
                 for (int i = y - 1; i >= 0; i--) {
                     if(countPiecesBetween(x, y, x, i)==0)
                         addMove(p, x, i, moves, capturesOnly);
+                    if (board[y * 9 + i] != 0) break; // 遇到任何棋子剪枝
                 }
                 break;
             case 'n'://马：注意卡马脚
@@ -113,65 +117,37 @@ public class Board {
                     }
                 }
                 break;
-            case 'c'://炮
-                if (!capturesOnly) {
-                    //单纯移动
-                    for (int i = x + 1; i < 9 && board[i + y * 9] == 0; i++) {
-                        moves.add(new Move(p.id, x, y, i, y));
-                    }
-                    for (int i = x - 1; i >= 0 && board[i + y * 9] == 0; i--) {
-                        moves.add(new Move(p.id, x, y, i, y));
-                    }
-                    for (int i = y + 1; i < 10 && board[x + i * 9] == 0; i++) {
-                        moves.add(new Move(p.id, x, y, x, i));
-                    }
-                    for (int i = y - 1; i >= 0 && board[x + i * 9] == 0; i--) {
-                        moves.add(new Move(p.id, x, y, x, i));
-                    }
-                }
-                //吃子
-                for (int i = x + 1; i < 9; i++) {
-                    if (board[i + y * 9] != 0) {
-                        for (i++; i < 9; i++) {
-                            if (board[i + y * 9] != 0) {
-                                addMove(p, i, y, moves, true);
-                                break;
-                            }
+            case 'c':
+                // 方向：右、左、上、下
+                int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+                for (int[] dir : directions) {
+                    int dx = dir[0], dy = dir[1];
+
+                    for (int i = 1; i < (dx != 0 ? 9 : 10); i++) {
+                        int nx = x + i * dx;
+                        int ny = y + i * dy;
+
+                        // 1. 检查位置合法性
+                        if (!isValidPosition(nx, ny)) break;
+
+                        // 2. 检查 wouldKingsFace（仅当 x 变化时）
+                        if (dx != 0 && wouldKingsFace(p.x, nx)) continue;
+
+                        int idx = ny * 9 + nx;
+                        int piecesBetween = countPiecesBetween(x, y, nx, ny);
+
+                        // 3. 吃子移动（capturesOnly=true 或 false）
+                        if (piecesBetween == 1 && isEnemy(nx, ny, p.isOurSide())) {
+                            moves.add(new Move(p.id, p.x, p.y, nx, ny));
                         }
-                        break;
-                    }
-                }
-                for (int i = x - 1; i >= 0; i--) {
-                    if (board[i + y * 9] != 0) {
-                        for (i--; i >= 0; i--) {
-                            if (board[i + y * 9] != 0) {
-                                addMove(p, i, y, moves, true);
-                                break;
-                            }
+
+                        // 4. 非吃子移动（capturesOnly=false）
+                        if (!capturesOnly && piecesBetween == 0 && board[idx] == 0) {
+                            moves.add(new Move(p.id, p.x, p.y, nx, ny));
                         }
-                        break;
-                    }
-                }
-                for (int i = y + 1; i < 10; i++) {
-                    if (board[x + i * 9] != 0) {
-                        for (i++; i < 10; i++) {
-                            if (board[x + i * 9] != 0) {
-                                addMove(p, x, i, moves, true);
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-                for (int i = y - 1; i >= 0; i--) {
-                    if (board[x + i * 9] != 0) {
-                        for (i--; i >= 0; i--) {
-                            if (board[x + i * 9] != 0) {
-                                addMove(p, x, i, moves, true);
-                                break;
-                            }
-                        }
-                        break;
+
+                        // 5. 如果路径上有棋子，终止该方向的搜索（除非吃子已处理）
+                        if (piecesBetween > 0) break;
                     }
                 }
                 break;
@@ -244,7 +220,15 @@ public class Board {
 
     //检查是否卡马脚
     private boolean isBlockedKnight(int sx, int sy, int x, int y) {
-        return (Math.abs(x - sx) == 2 && Math.abs(y - sy) == 1) || (Math.abs(x - sx) == 1 && Math.abs(y - sy) == 2);
+        int dx = x - sx, dy = y - sy;
+        if (Math.abs(dx) == 2 && Math.abs(dy) == 1) {
+            int mx = sx + dx / 2; // 马腿位置
+            return board[sy * 9 + mx] != 0;
+        } else if (Math.abs(dx) == 1 && Math.abs(dy) == 2) {
+            int my = sy + dy / 2; // 马腿位置
+            return board[my * 9 + sx] != 0;
+        }
+        return true; // 无效的马移动
     }
 
     //检查是否在宫殿内
@@ -270,24 +254,36 @@ public class Board {
     }
 
 
-    //检查是否是敌人(不检查是不是空）
+    //检查是否是敌人
     private boolean isEnemy(int x, int y,boolean ourSide){
         if(ourSide){
-            return board[x+y*9]<='Z';
+            return board[x+y*9]<='Z'&&board[x+y*9]!=0;
         }else{
             return board[x+y*9]>='a';
         }
     }
 
+    //检查飞将：1.两个王是不是在同一x上。2.移动的棋子是不是从这个x移开了？3.如果是，数判断两王之间棋子数量。
+    private boolean wouldKingsFace(int sx,int tx){
+        PieceInfo k=pieces.get("k");
+        PieceInfo K=pieces.get("K");
+
+        if (k.x != K.x) return false;
+
+        if (sx != k.x) return false;
+
+        if (sx==tx) return false;
+
+        return countPiecesBetween(k.x, k.y,K.x, K.y) == 0;
+    }
+
     private void addMove(PieceInfo p, int x, int y, List<Move> moves, boolean capturesOnly) {
         if(!isValidPosition(x, y)) return;
+        if(wouldKingsFace(p.x,x)) return;
         int idx = y * 9 + x;
         if (board[idx] == 0) {
             if (!capturesOnly) moves.add(new Move(p.id, p.x, p.y, x, y));
         } else if (isEnemy(x, y,p.isOurSide())) {//是敌方棋子也可以走,吃子
-            //temp
-            System.out.println("吃子记录："+p.id+" "+x+" "+y);
-
             moves.add(new Move(p.id, p.x, p.y, x, y));
         }
     }
