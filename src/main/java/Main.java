@@ -55,7 +55,8 @@ public class Main {
                 System.out.println("开始思考！");
 
                 //生成移动
-                Move bestMove = ai.iterativeDeepening(board, MAX_DEPTH); // 迭代加深搜索
+                //Move bestMove = ai.iterativeDeepening(board, MAX_DEPTH); // 迭代加深搜索
+                Move bestMove = ai.getRandomMove(board);
 
                 if (bestMove != null) {
                     board.makeMove(bestMove); // 执行AI最佳移动

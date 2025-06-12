@@ -220,6 +220,7 @@ public class Board {
 
     //检查是否卡马脚
     private boolean isBlockedKnight(int sx, int sy, int x, int y) {
+        if (!isValidPosition(x, y)) return true;
         int dx = x - sx, dy = y - sy;
         if (Math.abs(dx) == 2 && Math.abs(dy) == 1) {
             int mx = sx + dx / 2; // 马腿位置
