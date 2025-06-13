@@ -42,6 +42,7 @@ public class Main {
                     String pid = sp[0];
                     int x = Integer.parseInt(sp[1]);
                     int y = Integer.parseInt(sp[2]);
+
                     Move move=new Move(pid, x, y);
                     board.makeMove(move);
 
@@ -55,8 +56,8 @@ public class Main {
                 System.out.println("开始思考！");
 
                 //生成移动
-                //Move bestMove = ai.iterativeDeepening(board, MAX_DEPTH); // 迭代加深搜索
-                Move bestMove = ai.getRandomMove(board);
+                Move bestMove = ai.iterativeDeepening(board, MAX_DEPTH); // 迭代加深搜索
+
 
                 if (bestMove != null) {
                     board.makeMove(bestMove); // 执行AI最佳移动

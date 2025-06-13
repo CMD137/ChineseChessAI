@@ -157,8 +157,8 @@ public class Evaluator {
                 0,  0,  0,  0,  0,  0,  0,  0,  0,
                 0,  0,  0,  0,  0,  0,  0,  0,  0,
                 0,  0,  0,  0,  0,  0,  0,  0,  0,
-                0,  0,  0,  1,  1,  1,  0,  0,  0,
-                0,  0,  0,  2,  2,  2,  0,  0,  0,
+                0,  0,  0, -10,-20,-10,  0,  0,  0,
+                0,  0,  0, -5,  0, -5,  0,  0,  0,
                 0,  0,  0, 11, 15, 11,  0,  0,  0,
         };
         System.arraycopy(rawKing, 0, enemyKingTable, 0, 90);
@@ -170,6 +170,24 @@ public class Evaluator {
     // 主评估函数
     public int evaluate(Board board,boolean isOurSide) {
         int score = 0;
+
+        //杀王：
+        if (isOurSide){
+            //小写方
+            if (board.pieces.get("k")==null){
+                return Integer.MIN_VALUE;//输
+            }else if (board.pieces.get("K")==null){
+                return Integer.MAX_VALUE;//赢
+            }
+        }else {
+            //大写方
+            if (board.pieces.get("K")==null){
+                return Integer.MIN_VALUE;//输
+            }else if (board.pieces.get("k")==null){
+                return Integer.MAX_VALUE;//赢
+            }
+        }
+
         for (int i = 0; i < 90; i++) {
             byte piece = board.board[i];
             if (piece == 0) continue;
@@ -216,7 +234,7 @@ public class Evaluator {
         }
     }
 
-    // 获取位置价值（自动镜像）
+    // 获取位置价值
     private int getPositionValue(byte piece, int i, boolean isOurSide) {
 
         switch (piece) {
@@ -236,8 +254,6 @@ public class Evaluator {
             case 'P': return enemyPawnTable[i];
             default: return 0;
         }
-
-
     }
 
     // 用于调试任意表

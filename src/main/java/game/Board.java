@@ -37,14 +37,19 @@ public class Board {
         int from = p.y * 9 + p.x;
         int to = move.y * 9 + move.x;
 
+
+        //吃子
         move.captured = null;
-        for (Map.Entry<String, PieceInfo> entry : pieces.entrySet()) {
-            if (entry.getValue().x == move.x && entry.getValue().y == move.y) {
-                move.captured = new PieceInfo(entry.getValue());
-                pieces.remove(entry.getKey());//吃子
-                break;
+        if (board[to]!=0){
+            for (Map.Entry<String, PieceInfo> entry : pieces.entrySet()) {
+                if (entry.getValue().x == move.x && entry.getValue().y == move.y) {
+                    move.captured = new PieceInfo(entry.getValue());
+                    pieces.remove(entry.getKey());//吃子
+                    break;
+                }
             }
         }
+
 
         board[from] = 0;
         board[to] = p.getPiece();
@@ -55,17 +60,27 @@ public class Board {
 
     public void undoMove(Move move) {
         PieceInfo p = pieces.get(move.pieceId);
-        int to = p.y * 9 + p.x;
-        int from = move.fromY * 9 + move.fromX;
-        board[to] = move.captured != null ? move.captured.getPiece() : 0;
+        int to = p.y * 9 + p.x;           // 当前棋子所在格（目的地）
+        int from = move.fromY * 9 + move.fromX; // 棋子原来位置
+
+        // 把目标格清空，棋子撤回原格
+        board[to] = 0;
         board[from] = p.getPiece();
+
+        // 恢复棋子坐标
         p.x = move.fromX;
         p.y = move.fromY;
+
+        // 如果吃子，恢复被吃的棋子
         if (move.captured != null) {
             pieces.put(move.captured.id, move.captured);
+            int capPos = move.captured.y * 9 + move.captured.x;
+            board[capPos] = move.captured.getPiece();
         }
+
         sideToMove = !sideToMove;
     }
+
 
 
     public Move[] generateMoves(boolean capturesOnly) {
@@ -81,6 +96,7 @@ public class Board {
     private List<Move> generateMovesForPiece(PieceInfo p, boolean capturesOnly) {
         List<Move> moves = new ArrayList<>();
         int x = p.x, y = p.y;
+        //都转为小写字母方便写，但是地方放数据还在p中
         char type = p.getPieceType();
 
 
@@ -100,12 +116,12 @@ public class Board {
                 for (int i = y + 1; i < 10; i++) {
                     if(countPiecesBetween(x, y, x, i)==0)
                         addMove(p, x, i, moves, capturesOnly);
-                    if (board[y * 9 + i] != 0) break; // 遇到任何棋子剪枝
+                    if (board[i * 9 + x] != 0) break; // 遇到任何棋子剪枝
                 }
                 for (int i = y - 1; i >= 0; i--) {
                     if(countPiecesBetween(x, y, x, i)==0)
                         addMove(p, x, i, moves, capturesOnly);
-                    if (board[y * 9 + i] != 0) break; // 遇到任何棋子剪枝
+                    if (board[i * 9 + x] != 0) break; // 遇到任何棋子剪枝
                 }
                 break;
             case 'n'://马：注意卡马脚
@@ -269,6 +285,8 @@ public class Board {
         PieceInfo k=pieces.get("k");
         PieceInfo K=pieces.get("K");
 
+        if (k == null || K == null) return false;
+
         if (k.x != K.x) return false;
 
         if (sx != k.x) return false;
@@ -289,19 +307,6 @@ public class Board {
         }
     }
 
-
-    private int getPieceValue(byte piece) {
-        switch (Character.toLowerCase(piece)) {
-            case 'k': return 10000;
-            case 'r': return 900;
-            case 'c': return 450;
-            case 'n': return 400;
-            case 'b': return 200;
-            case 'a': return 100;
-            case 'p': return 150;
-            default: return 0;
-        }
-    }
 
 
     public void print() {
