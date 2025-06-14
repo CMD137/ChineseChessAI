@@ -167,58 +167,39 @@ public class Evaluator {
         }
     }
 
-    // 主评估函数
-    public int evaluate(Board board,boolean isOurSide) {
+    public int evaluate(Board board) {
         int score = 0;
 
-        //杀王：
-        if (isOurSide){
-            //小写方
-            if (board.pieces.get("k")==null){
-                return Integer.MIN_VALUE;//输
-            }else if (board.pieces.get("K")==null){
-                return Integer.MAX_VALUE;//赢
-            }
-        }else {
-            //大写方
-            if (board.pieces.get("K")==null){
-                return Integer.MIN_VALUE;//输
-            }else if (board.pieces.get("k")==null){
-                return Integer.MAX_VALUE;//赢
-            }
+        // 判断杀王：小写方没了输， 大写方没了赢
+        if (board.pieces.get("k") == null) {
+            return Integer.MIN_VALUE; // AI输
+        } else if (board.pieces.get("K") == null) {
+            return Integer.MAX_VALUE; // AI赢
         }
 
         for (int i = 0; i < 90; i++) {
             byte piece = board.board[i];
             if (piece == 0) continue;
 
-
             int base = getPieceValue(piece);
-            int pos = getPositionValue(piece, i, isOurSide);
+            int pos = getPositionValue(piece, i, true); // 位置价值以AI视角计算
 
-            //ourside为true，那么加上小写棋子的分
-            if (isOurSide) {
-                if (Character.isLowerCase(piece)){
-                    score += (base + pos);
-                }else {
-                    score -= (base + pos);
-                }
-            }else {
-                if (Character.isUpperCase(piece)){
-                    score -= (base + pos);
-                }else {
-                    score += (base + pos);
-                }
+            if (Character.isLowerCase(piece)) {
+                score += (base + pos);
+            } else {
+                score -= (base + pos);
             }
+        }
 
-            //temp:
+        //temp:
 //            int x=i%9;
 //            int y=i/9;
 //            System.out.println((char) piece+" "+i+" -> "+x+"，"+y+" "+"base:"+base+" pos:"+pos);
 //            System.out.println("score:"+score);
-        }
+
         return score;
     }
+
 
     // 获取基础分值
     private int getPieceValue(byte piece) {

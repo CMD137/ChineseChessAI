@@ -5,7 +5,6 @@ import java.util.*;
 public class Board {
     public byte[] board = new byte[90];
     public Map<String, PieceInfo> pieces = new HashMap<>();
-    public boolean sideToMove = true;
 
     public Board() {
         setupInitialPosition();
@@ -55,7 +54,6 @@ public class Board {
         board[to] = p.getPiece();
         p.x = move.x;
         p.y = move.y;
-        sideToMove = !sideToMove;
     }
 
     public void undoMove(Move move) {
@@ -77,17 +75,24 @@ public class Board {
             int capPos = move.captured.y * 9 + move.captured.x;
             board[capPos] = move.captured.getPiece();
         }
-
-        sideToMove = !sideToMove;
     }
 
 
-
-    public Move[] generateMoves(boolean capturesOnly) {
+    public Move[] generateAllMoves(boolean isOurSide) {
         List<Move> moves = new ArrayList<>();
         for (PieceInfo p : pieces.values()) {
-            if (p.isOurSide() == sideToMove) {
-                moves.addAll(generateMovesForPiece(p, capturesOnly));
+            if (p.isOurSide() == isOurSide) {
+                moves.addAll(generateMovesForPiece(p, false));//不是只生成杀子走法
+            }
+        }
+        return moves.toArray(new Move[0]);
+    }
+
+    public Move[] generateCaptureMoves(boolean isOurSide) {
+        List<Move> moves = new ArrayList<>();
+        for (PieceInfo p : pieces.values()) {
+            if (p.isOurSide() == isOurSide) {
+                moves.addAll(generateMovesForPiece(p, true));
             }
         }
         return moves.toArray(new Move[0]);

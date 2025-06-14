@@ -16,12 +16,10 @@ public class Main {
         Board board = new Board(); // 初始化棋盘
         AI ai = new AI(); // 初始化AI
 
-
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line;
 
         int round=0;
-        board.sideToMove = false;
 
         //temp
         System.out.println("第"+round+"回合:");
@@ -32,12 +30,14 @@ public class Main {
                 //temp
                 long start=System.currentTimeMillis();
 
+
+
                 //处理输入
                 if(line.isEmpty()) continue;
                 if(line.equals("START")){
-                    board.sideToMove = true;
                 } else {
                     //System.out.println("sideToMove: " + board.getSideToMove());
+
                     String[] sp = line.trim().split("\\s+");
                     String pid = sp[0];
                     int x = Integer.parseInt(sp[1]);
@@ -48,16 +48,14 @@ public class Main {
 
                     //temp
                     //System.out.println("sideToMove: " + board.getSideToMove());
-                    board.print(); // 显示棋盘      
-                    long now=System.currentTimeMillis();
-                    System.out.println("计算沙子棋盘用时:"+(now-start)+"ms");
+                    board.print(); // 显示棋盘
                 }
 
-                System.out.println("开始思考！");
-
                 //生成移动
-                Move bestMove = ai.iterativeDeepening(board, MAX_DEPTH); // 迭代加深搜索
+                Move bestMove = ai.iterativeDeepening(board,MAX_DEPTH); // 迭代加深搜索
 
+                //temp
+                System.out.println("MAX:"+MAX_DEPTH);
 
                 if (bestMove != null) {
                     board.makeMove(bestMove); // 执行AI最佳移动
