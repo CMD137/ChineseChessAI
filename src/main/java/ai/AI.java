@@ -5,6 +5,7 @@ import util.Constants;
 
 import java.util.Arrays;
 
+import static util.Constants.Q_DEPTH_LIMIT;
 import static util.Constants.TIME_LIMIT;
 
 public class AI {
@@ -68,7 +69,8 @@ public class AI {
 
         //递归边界条件：
         if (depth == 0) {
-            return evaluator.evaluate(board);
+            //宁静搜索
+            return quiescenceSearch(board, alpha, beta, 0);
         }
 
 
@@ -121,6 +123,48 @@ public class AI {
             return minEval;
         }
     }
+
+    /**
+     * Quiescence Search（宁静搜索） - 延伸不稳定局面
+     */
+    private int quiescenceSearch(Board board, int alpha, int beta, int qDepth) {
+        // 时间剪枝保护
+        if (System.currentTimeMillis() - startTime > TIME_LIMIT) {
+            return evaluator.evaluate(board);
+        }
+
+        // 深度剪枝保护
+        if (qDepth >= Q_DEPTH_LIMIT) {
+            return evaluator.evaluate(board);
+        }
+
+
+        int standPat = evaluator.evaluate(board);
+        if (standPat >= beta) return beta;
+        if (alpha < standPat) alpha = standPat;
+
+        Move[] captures = board.generateCaptureMoves(true);
+        // 可选：进一步过滤只吃“高价值子”（减少节点）
+        // captures = Arrays.stream(captures).filter(m -> evaluator.getPieceValue(board.board[m.y * 9 + m.x]) >= 3).toArray(Move[]::new);
+
+        // 启发排序：吃高价值优先（可选）
+        Arrays.sort(captures, (a, b) -> Integer.compare(
+                getMoveScore(board, b),
+                getMoveScore(board, a)
+        ));
+
+        for (Move move : captures) {
+            board.makeMove(move);
+            int score = -quiescenceSearch(board, -beta, -alpha, qDepth + 1); // 极小化视角对称
+            board.undoMove(move);
+
+            if (score >= beta) return beta;
+            if (score > alpha) alpha = score;
+        }
+
+        return alpha;
+    }
+
 
     //用于排序，给move打分
     private int getMoveScore(Board board, Move move) {
