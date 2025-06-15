@@ -19,9 +19,8 @@ public class Main {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line;
 
-        int round=0;
-
         //temp
+        int round=0;
         System.out.println("第"+round+"回合:");
         board.print(); // 显示棋盘
 
@@ -29,8 +28,6 @@ public class Main {
             while((line = reader.readLine()) != null){
                 //temp
                 long start=System.currentTimeMillis();
-
-
 
                 //处理输入
                 if(line.isEmpty()) continue;
@@ -55,7 +52,7 @@ public class Main {
                 Move bestMove = ai.iterativeDeepening(board,MAX_DEPTH); // 迭代加深搜索
 
                 //temp
-                System.out.println("MAX:"+MAX_DEPTH);
+                //System.out.println("MAX:"+MAX_DEPTH);
 
                 if (bestMove != null) {
                     board.makeMove(bestMove); // 执行AI最佳移动
@@ -73,8 +70,7 @@ public class Main {
                 round++;
                 System.out.println("第"+round+"回合:");
                 board.print(); // 显示棋盘
-                long end=System.currentTimeMillis();
-                System.out.println("用时:"+(end-start)+"ms");
+                System.out.println("用时:"+(System.currentTimeMillis()-start)+"ms");
 
             }
         }catch (IOException e){

@@ -9,7 +9,7 @@ import java.util.Objects;
 public class Move {
     public String pieceId;
     public int fromX, fromY, x, y;
-    public PieceInfo captured;
+        public PieceInfo captured;
 
 
     public Move(String pieceId, int fromX, int fromY, int x, int y) {

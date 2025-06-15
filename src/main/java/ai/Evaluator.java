@@ -202,7 +202,7 @@ public class Evaluator {
 
 
     // 获取基础分值
-    private int getPieceValue(byte piece) {
+    public int getPieceValue(byte piece) {
         switch (Character.toLowerCase(piece)) {
             case 'k': return KING_VALUE;
             case 'r': return ROOK_VALUE;

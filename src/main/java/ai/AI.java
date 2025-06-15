@@ -3,6 +3,8 @@ package ai;
 import game.*;
 import util.Constants;
 
+import java.util.Arrays;
+
 import static util.Constants.TIME_LIMIT;
 
 public class AI {
@@ -24,11 +26,6 @@ public class AI {
                 System.out.println("IDS搜索超时，停止于深度：" + depth);
                 break;
             }
-
-            //temp
-            System.out.println("MAX"+maxDepth);
-            System.out.println("IDS"+depth);
-
 
             int bestValue = -Constants.INF;
             Move[] moves = board.generateAllMoves(true);  // AI走法，小写方走法
@@ -59,6 +56,7 @@ public class AI {
      */
     private int alphaBeta(Board board, int depth, int alpha, int beta, boolean maximizingPlayer) {
         if (System.currentTimeMillis() - startTime > TIME_LIMIT) {
+            //temp
             System.out.println("alpha-beta搜索超时："+depth);
             int fallback = evaluator.evaluate(board);
             if (maximizingPlayer) {
@@ -77,11 +75,14 @@ public class AI {
         //生成当前局面下，当前行动方的所有合法走法
         Move[] moves = board.generateAllMoves(maximizingPlayer);
 
+        //启发排序
+        Arrays.sort(moves,(a,b)->Integer.compare(
+                getMoveScore(board,b),getMoveScore(board,a)
+        ));
+
+
         //若无合法走法，则视为该方被将死（输）或无路可走（和棋）
-        //返回极端分数，表明输赢局面
         if (moves.length == 0) {
-            //如果当前是极大方（AI），无路可走即输，返回极小值
-            //否则对手无路可走，视为AI赢，返回极大值
             return maximizingPlayer ? -Constants.INF : Constants.INF;
         }
 
@@ -89,10 +90,9 @@ public class AI {
         if (maximizingPlayer) {
             int maxEval = -Constants.INF; // 初始化最大值为负无穷
             for (Move move : moves) {
-                board.makeMove(move); // 执行当前走法
-                // 递归调用alphaBeta搜索下一层，对手轮次为极小化分支
+                board.makeMove(move);
                 int eval = alphaBeta(board, depth - 1, alpha, beta, false);
-                board.undoMove(move); // 撤销走法，恢复局面
+                board.undoMove(move);
 
                 // 更新最大估值
                 if (eval > maxEval) maxEval = eval;
@@ -101,16 +101,15 @@ public class AI {
                 // 剪枝条件：alpha >= beta时，停止继续搜索该节点的剩余分支
                 if (beta <= alpha) break;
             }
-            return maxEval; // 返回该节点的最大估值
+            return maxEval;
         }
-        // 极小化分支：当前节点为对手轮次，目标是最小化估值（对AI而言）
+        // 极小化分支：当前节点为对手轮次，目标是最小化估值
         else {
             int minEval = Constants.INF; // 初始化最小值为正无穷
             for (Move move : moves) {
-                board.makeMove(move); // 执行当前走法
-                // 递归调用alphaBeta搜索下一层，AI轮次为极大化分支
+                board.makeMove(move);
                 int eval = alphaBeta(board, depth - 1, alpha, beta, true);
-                board.undoMove(move); // 撤销走法，恢复局面
+                board.undoMove(move);
 
                 // 更新最小估值
                 if (eval < minEval) minEval = eval;
@@ -119,8 +118,35 @@ public class AI {
                 // 剪枝条件：alpha >= beta时，停止继续搜索该节点的剩余分支
                 if (beta <= alpha) break;
             }
-            return minEval; // 返回该节点的最小估值
+            return minEval;
         }
+    }
+
+    //用于排序，给move打分
+    private int getMoveScore(Board board, Move move) {
+        int from = move.fromY * 9 + move.fromX;
+        int to = move.y * 9 + move.x;
+
+        int score = 0;
+
+        // 1. MVV-LVA 吃子排序:低价值吃高价值优先
+        byte captured = board.board[to];
+        if (captured != 0) {
+            int victimValue = evaluator.getPieceValue(captured);
+            int attackerValue = evaluator.getPieceValue(board.board[from]);
+            score += (victimValue * 10 - attackerValue);
+        }
+
+        // 2. 杀手着法（Killer Move）：某层之前反复剪枝的走法
+        //if (isKillerMove(move)) score += 5000;
+
+        // 3. 历史启发（History Heuristic）：历史上这个起点-终点的表现好
+        //score += historyTable[move.from][move.to]; // 二维数组记录效果
+
+        // 4. 将军检测（可选）：走完是否能将军
+        //if (doesGiveCheck(board, move)) score += 100;
+
+        return score;
     }
 
 
