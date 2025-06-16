@@ -20,14 +20,14 @@ public class Main {
         String line;
 
         //temp
-        int round=0;
-        System.out.println("第"+round+"回合:");
-        board.print(); // 显示棋盘
+//        int round=0;
+//        System.out.println("第"+round+"回合:");
+//        board.print(); // 显示棋盘
 
         try {
             while((line = reader.readLine()) != null){
                 //temp
-                long start=System.currentTimeMillis();
+                //long start=System.currentTimeMillis();
 
                 //处理输入
                 if(line.isEmpty()) continue;
@@ -45,7 +45,7 @@ public class Main {
 
                     //temp
                     //System.out.println("sideToMove: " + board.getSideToMove());
-                    board.print(); // 显示棋盘
+                    //board.print(); // 显示棋盘
                 }
 
                 //生成移动
@@ -72,10 +72,10 @@ public class Main {
                 }
 
                 //temp
-                round++;
-                System.out.println("第"+round+"回合:");
-                board.print(); // 显示棋盘
-                System.out.println("用时:"+(System.currentTimeMillis()-start)+"ms");
+//                round++;
+//                System.out.println("第"+round+"回合:");
+//                board.print(); // 显示棋盘
+//                System.out.println("用时:"+(System.currentTimeMillis()-start)+"ms");
 
             }
         }catch (IOException e){

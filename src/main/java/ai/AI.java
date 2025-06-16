@@ -23,7 +23,8 @@ public class AI {
 
         for (int depth = 1; depth <= maxDepth; depth++) {
             if (System.currentTimeMillis() - startTime > TIME_LIMIT) {
-                System.out.println("IDS搜索超时，停止于深度：" + depth);
+                //temp：
+                //System.out.println("IDS搜索超时，停止于深度：" + depth);
                 break;
             }
 
