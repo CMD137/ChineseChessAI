@@ -21,6 +21,6 @@ public class EvaluatorTest {
         System.out.println("MY king:");
         System.out.println(kingTable[0*9+4]);
 
-        System.out.println("evaluate:"+evaluator.evaluate(board));
+        System.out.println("evaluate:"+evaluator.evaluate(board,true));
     }
 }

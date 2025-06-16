@@ -32,6 +32,16 @@ public class AI {
 
             for (Move move : moves) {
                 board.makeMove(move);
+
+                //temp
+                System.out.println("模拟走子: " + move);
+                System.out.println("此时我方是否被将军: " + board.isInCheck(true));
+
+                // 检查是否走完后自己被将军（如给对方当炮架）
+                if (board.isInCheck(true)) {
+                    board.undoMove(move);
+                    continue;
+                }
                 // 下一层轮到对方（大写方）走
                 int value = alphaBeta(board, depth - 1, -Constants.INF, Constants.INF, false);
                 board.undoMove(move);
@@ -57,8 +67,8 @@ public class AI {
     private int alphaBeta(Board board, int depth, int alpha, int beta, boolean maximizingPlayer) {
         if (System.currentTimeMillis() - startTime > TIME_LIMIT) {
             //temp
-            System.out.println("alpha-beta搜索超时："+depth);
-            int fallback = evaluator.evaluate(board);
+            //System.out.println("alpha-beta搜索超时："+depth);
+            int fallback = evaluator.evaluate(board,maximizingPlayer);
             if (maximizingPlayer) {
                 return alpha != -Constants.INF ? alpha : fallback;
             } else {
@@ -68,7 +78,7 @@ public class AI {
 
         //递归边界条件：
         if (depth == 0) {
-            return evaluator.evaluate(board);
+            return evaluator.evaluate(board,maximizingPlayer);
         }
 
 
@@ -77,7 +87,7 @@ public class AI {
 
         //启发排序
         Arrays.sort(moves,(a,b)->Integer.compare(
-                getMoveScore(board,b),getMoveScore(board,a)
+                getMoveScore(board,b,maximizingPlayer),getMoveScore(board,a,maximizingPlayer)
         ));
 
 
@@ -91,6 +101,11 @@ public class AI {
             int maxEval = -Constants.INF; // 初始化最大值为负无穷
             for (Move move : moves) {
                 board.makeMove(move);
+                // 检查是否导致自己暴露在将军状态
+                if (board.isInCheck(true)) {
+                    board.undoMove(move);
+                    continue;
+                }
                 int eval = alphaBeta(board, depth - 1, alpha, beta, false);
                 board.undoMove(move);
 
@@ -108,6 +123,11 @@ public class AI {
             int minEval = Constants.INF; // 初始化最小值为正无穷
             for (Move move : moves) {
                 board.makeMove(move);
+                // 检查是否导致自己暴露在将军状态
+                if (board.isInCheck(false)) {
+                    board.undoMove(move);
+                    continue;
+                }
                 int eval = alphaBeta(board, depth - 1, alpha, beta, true);
                 board.undoMove(move);
 
@@ -123,7 +143,7 @@ public class AI {
     }
 
     //用于排序，给move打分
-    private int getMoveScore(Board board, Move move) {
+    private int getMoveScore(Board board, Move move,boolean isAISide) {
         int from = move.fromY * 9 + move.fromX;
         int to = move.y * 9 + move.x;
 
@@ -143,12 +163,18 @@ public class AI {
         // 3. 历史启发（History Heuristic）：历史上这个起点-终点的表现好
         //score += historyTable[move.from][move.to]; // 二维数组记录效果
 
-        // 4. 将军检测（可选）：走完是否能将军
-        //if (doesGiveCheck(board, move)) score += 100;
+        // 4. 将军检测：走完是否能将军
+        if (doesGiveCheck(board, move,isAISide)) score += 80;
 
         return score;
     }
 
+    private boolean doesGiveCheck(Board board, Move move, boolean isAISide) {
+        board.makeMove(move);
+        boolean result = board.isInCheck(!isAISide); // 判断敌方是否被将军
+        board.undoMove(move);
+        return result;
+    }
 
     public Move getRandomMove(Board board) {
         Move[] moves = board.generateAllMoves(true);

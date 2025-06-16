@@ -167,15 +167,27 @@ public class Evaluator {
         }
     }
 
-    public int evaluate(Board board) {
+    public int evaluate(Board board,boolean isAISide) {
         int score = 0;
 
-        // 判断杀王：小写方没了输， 大写方没了赢
-        if (board.pieces.get("k") == null) {
-            return Integer.MIN_VALUE; // AI输
-        } else if (board.pieces.get("K") == null) {
-            return Integer.MAX_VALUE; // AI赢
+
+        //杀王：
+        if (isAISide){
+            //小写方
+            if (board.pieces.get("k")==null){
+                return Integer.MIN_VALUE;//输
+            }else if (board.pieces.get("K")==null){
+                return Integer.MAX_VALUE;//赢
+            }
+        }else {
+            //大写方
+            if (board.pieces.get("K")==null){
+                return Integer.MIN_VALUE;//输
+            }else if (board.pieces.get("k")==null){
+                return Integer.MAX_VALUE;//赢
+            }
         }
+
 
         for (int i = 0; i < 90; i++) {
             byte piece = board.board[i];

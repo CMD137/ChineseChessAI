@@ -312,6 +312,28 @@ public class Board {
         }
     }
 
+    public boolean isInCheck(boolean isOurSide) {
+        String kingKey = isOurSide ? "k" : "K";
+        PieceInfo king = pieces.get(kingKey);
+
+
+        int kingX = king.x;
+        int kingY = king.y;
+
+        // 检查是否有敌方棋子可以攻击这个位置
+        for (PieceInfo enemy : pieces.values()) {
+            if (enemy.isOurSide() != isOurSide) {
+                List<Move> enemyMoves =generateMovesForPiece( enemy,true) ;
+                for (Move move : enemyMoves) {
+                    if (move.x == kingX && move.y == kingY) {
+                        return true; // 有敌方棋子能打到我方王
+                    }
+                }
+            }
+        }
+        return false; // 没有敌方能打到我方王
+    }
+
 
 
     public void print() {
