@@ -138,40 +138,44 @@ public class Board {
                     }
                 }
                 break;
+
             case 'c':
-                // 方向：右、左、上、下
                 int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
                 for (int[] dir : directions) {
                     int dx = dir[0], dy = dir[1];
+                    int nx = x + dx;
+                    int ny = y + dy;
+                    int piecesBetween = 0;
 
-                    for (int i = 1; i < (dx != 0 ? 9 : 10); i++) {
-                        int nx = x + i * dx;
-                        int ny = y + i * dy;
-
-                        // 1. 检查位置合法性
-                        if (!isValidPosition(nx, ny)) break;
-
-                        // 2. 检查 wouldKingsFace（仅当 x 变化时）
-                        if (dx != 0 && wouldKingsFace(p.x, nx)) continue;
+                    while (isValidPosition(nx, ny)) {
+                        // 检查飞将规则，仅横向时判断
+                        if (dx != 0 && wouldKingsFace(p.x, nx)) {
+                            break; // 不能沿这条横线走，会飞将
+                        }
 
                         int idx = ny * 9 + nx;
-                        int piecesBetween = countPiecesBetween(x, y, nx, ny);
+                        byte target = board[idx];
 
-                        // 3. 吃子移动（capturesOnly=true 或 false）
-                        if (piecesBetween == 1 && isEnemy(nx, ny, p.isOurSide())) {
-                            moves.add(new Move(p.id, p.x, p.y, nx, ny));
+                        if (target != 0) {
+                            piecesBetween++;
+                            if (piecesBetween == 2) {
+                                if (isEnemy(nx, ny, p.isOurSide())) {
+                                    moves.add(new Move(p.id, p.x, p.y, nx, ny));
+                                }
+                                break; // 第二个棋子后结束这方向搜索
+                            }
+                        } else {
+                            if (piecesBetween == 0 && !capturesOnly) {
+                                moves.add(new Move(p.id, p.x, p.y, nx, ny));
+                            }
                         }
 
-                        // 4. 非吃子移动（capturesOnly=false）
-                        if (!capturesOnly && piecesBetween == 0 && board[idx] == 0) {
-                            moves.add(new Move(p.id, p.x, p.y, nx, ny));
-                        }
-
-                        // 5. 如果路径上有棋子，终止该方向的搜索（除非吃子已处理）
-                        if (piecesBetween > 0) break;
+                        nx += dx;
+                        ny += dy;
                     }
                 }
                 break;
+
 
             case 'k'://王，只能在宫殿里走
                 int[][] kingMoves = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
@@ -316,6 +320,9 @@ public class Board {
         String kingKey = isOurSide ? "k" : "K";
         PieceInfo king = pieces.get(kingKey);
 
+        if (king == null) {
+            return false; // 没有王，无法被将军
+        }
 
         int kingX = king.x;
         int kingY = king.y;
@@ -334,6 +341,11 @@ public class Board {
         return false; // 没有敌方能打到我方王
     }
 
+
+    //检查敌方王死了没
+    public boolean isKingDead(boolean isAISide) {
+        return !pieces.containsKey(isAISide ? "k" : "K");
+    }
 
 
     public void print() {

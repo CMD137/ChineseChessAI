@@ -30,12 +30,24 @@ public class AI {
             int bestValue = -Constants.INF;
             Move[] moves = board.generateAllMoves(true);  // AI走法，小写方走法
 
+            // 启发式排序（使用相同的 getMoveScore 方法）
+            Arrays.sort(moves, (a, b) -> Integer.compare(
+                    getMoveScore(board, b, true), getMoveScore(board, a, true)
+            ));
+
             for (Move move : moves) {
                 board.makeMove(move);
 
                 //temp
-                System.out.println("模拟走子: " + move);
-                System.out.println("此时我方是否被将军: " + board.isInCheck(true));
+                //System.out.println("模拟走子: " + move);
+                //System.out.println("此时我方是否被将军: " + board.isInCheck(true));
+
+                // 找到胜招，直接返回
+                if (board.isKingDead(false)) {
+                    board.undoMove(move);
+                    return move;
+                }
+
 
                 // 检查是否走完后自己被将军（如给对方当炮架）
                 if (board.isInCheck(true)) {
@@ -175,6 +187,9 @@ public class AI {
         board.undoMove(move);
         return result;
     }
+
+
+
 
     public Move getRandomMove(Board board) {
         Move[] moves = board.generateAllMoves(true);

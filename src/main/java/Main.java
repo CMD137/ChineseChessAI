@@ -62,8 +62,13 @@ public class Main {
                     System.out.flush(); //注意要写这个
                 } else {
                     //temp
-                    System.out.println("bestMove空");
-                    break;
+                    //System.out.println("bestMove空");
+                    //没有bestMove应该是被将死了，随便走一步
+                    bestMove=ai.getRandomMove(board);
+                    board.makeMove(bestMove);
+                    //输出我方移动
+                    System.out.println(bestMove.pieceId + " " + bestMove.x + " " + bestMove.y);
+                    System.out.flush(); //注意要写这个
                 }
 
                 //temp
