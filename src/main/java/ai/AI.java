@@ -170,7 +170,7 @@ public class AI {
         }
 
         // 2. 杀手着法（Killer Move）：某层之前反复剪枝的走法
-        //if (isKillerMove(move)) score += 5000;
+        //if (isKillerMove(move)) score += 200;
 
         // 3. 历史启发（History Heuristic）：历史上这个起点-终点的表现好
         //score += historyTable[move.from][move.to]; // 二维数组记录效果
@@ -187,8 +187,6 @@ public class AI {
         board.undoMove(move);
         return result;
     }
-
-
 
 
     public Move getRandomMove(Board board) {

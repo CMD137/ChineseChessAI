@@ -6,5 +6,5 @@ public class Constants {
 
     public static final int INF = Integer.MAX_VALUE; // 无穷大值
 
-    public static final int TIME_LIMIT = 4950;//给5000ms给出冗余
+    public static final int TIME_LIMIT = 4800;//给5000ms给出冗余
 }
