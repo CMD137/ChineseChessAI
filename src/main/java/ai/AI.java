@@ -90,7 +90,7 @@ public class AI {
 
         //递归边界条件：
         if (depth == 0) {
-            return evaluator.evaluate(board,maximizingPlayer);
+            return quiescenceSearch(board, alpha, beta, 0, maximizingPlayer);
         }
 
 
@@ -153,6 +153,66 @@ public class AI {
             return minEval;
         }
     }
+
+
+    /**
+     * Quiescence Search（宁静搜索） - 延伸不稳定局面
+     */
+    private int quiescenceSearch(Board board, int alpha, int beta, int qDepth, boolean isMaximizing) {
+        // 时间剪枝保护
+        if (System.currentTimeMillis() - startTime > TIME_LIMIT) {
+            return evaluator.evaluate(board, isMaximizing);
+        }
+
+        // 深度剪枝保护
+        if (qDepth >= 3) {
+            return evaluator.evaluate(board, isMaximizing);
+        }
+
+        // 当前局面静态估值
+        int standPat = evaluator.evaluate(board, isMaximizing);
+        if (isMaximizing) {
+            if (standPat >= beta) return beta;
+            if (alpha < standPat) alpha = standPat;
+        } else {
+            if (standPat <= alpha) return alpha;
+            if (beta > standPat) beta = standPat;
+        }
+
+        //只生成吃子走法
+        Move[] captures = board.generateCaptureMoves(isMaximizing);
+
+        // 启发式排序（如 MVV-LVA 等）
+        Arrays.sort(captures, (a, b) -> Integer.compare(
+                getMoveScore(board, b, isMaximizing),
+                getMoveScore(board, a, isMaximizing)
+        ));
+
+        for (Move move : captures) {
+            board.makeMove(move);
+
+            // 防止走完自己被将军
+            if (board.isInCheck(isMaximizing)) {
+                board.undoMove(move);
+                continue;
+            }
+
+            int score = quiescenceSearch(board, alpha, beta, qDepth + 1, !isMaximizing);
+            board.undoMove(move);
+
+            if (isMaximizing) {
+                if (score >= beta) return beta;
+                if (score > alpha) alpha = score;
+            } else {
+                if (score <= alpha) return alpha;
+                if (score < beta) beta = score;
+            }
+        }
+
+        return isMaximizing ? alpha : beta;
+    }
+
+
 
     //用于排序，给move打分
     private int getMoveScore(Board board, Move move,boolean isAISide) {

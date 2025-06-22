@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1dbba3c3-28ca-4b9b-b796-fa9958f28997" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ai/AI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ai/AI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/util/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/AITest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/EvaluatorTest.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://$USER_HOME$/.jdks/corretto-1.8.0_452/src.zip!/java/lang/NullPointerException.java" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="MavenRunner">
+    <option name="jreName" value="11" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2yJ6lKb0XwggDw48MUagyk3tfRe" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AITest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.EvaluatorTest.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ChessAI [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ChessAI [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ChessAI [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ChessAI [test].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ChessAI [validate].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;com.intellij.ide.FileNotInSourceRootChecker.no.check&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/29924/Desktop/文档/大二/算法/课设/ChessAI/src/main/java/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.importing&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="ai" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\29924\Desktop\文档\大二\算法\课设\ChessAI\src\test\java" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1dbba3c3-28ca-4b9b-b796-fa9958f28997" name="Changes" comment="" />
+      <created>1749540480506</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1749540480506</updated>
+      <workItem from="1749540483002" duration="1557000" />
+      <workItem from="1749564164690" duration="5342000" />
+      <workItem from="1749609494163" duration="4388000" />
+      <workItem from="1749613933712" duration="3342000" />
+      <workItem from="1749617300092" duration="61000" />
+      <workItem from="1749617440478" duration="155000" />
+      <workItem from="1749617698483" duration="3892000" />
+      <workItem from="1749649740800" duration="5192000" />
+      <workItem from="1749655701474" duration="5523000" />
+      <workItem from="1749693507522" duration="10416000" />
+      <workItem from="1749712636272" duration="13428000" />
+      <workItem from="1749782113717" duration="513000" />
+      <workItem from="1749782801982" duration="9063000" />
+      <workItem from="1749908636068" duration="5454000" />
+      <workItem from="1749919440169" duration="1656000" />
+      <workItem from="1749921115231" duration="137000" />
+      <workItem from="1749921265991" duration="264000" />
+      <workItem from="1749957429974" duration="7387000" />
+      <workItem from="1750044658135" duration="2948000" />
+      <workItem from="1750047960579" duration="11398000" />
+      <workItem from="1750421224520" duration="1193000" />
+      <workItem from="1750512908150" duration="405000" />
+      <workItem from="1750513607616" duration="4877000" />
+      <workItem from="1750520624251" duration="607000" />
+      <workItem from="1750564522021" duration="1512000" />
+      <workItem from="1750566061977" duration="176000" />
+      <workItem from="1750566247818" duration="134000" />
+      <workItem from="1750566428394" duration="317000" />
+      <workItem from="1750566756595" duration="553000" />
+      <workItem from="1750567317943" duration="1955000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.NullPointerException" package="java.lang" />
+          <option name="timeStamp" value="21" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="board[89]" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
